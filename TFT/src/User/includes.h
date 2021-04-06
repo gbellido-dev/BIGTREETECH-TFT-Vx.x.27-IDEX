@@ -86,6 +86,7 @@
 #include "Heat.h"
 #include "PreheatMenu.h"
 #include "Move.h"
+#include "MoveIdex.h"
 #include "Home.h"
 #include "Print.h"
 #include "Printing.h"

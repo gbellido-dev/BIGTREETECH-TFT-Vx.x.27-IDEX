@@ -14,18 +14,18 @@ void menuUnifiedMove(void)
       {ICON_DISABLE_STEPPERS,        LABEL_DISABLE_STEPPERS},
       {ICON_BABYSTEP,                LABEL_BABYSTEP},
       {ICON_MANUAL_LEVEL,            LABEL_LEVELING},
-      {ICON_BACKGROUND,              LABEL_BACKGROUND},
+      {ICON_MOVE_IDEX,               LABEL_MOVE_IDEX},
       {ICON_BACK,                    LABEL_BACK},
     }
   };
 
   KEY_VALUES key_num = KEY_IDLE;
 
-  if (infoMachineSettings.leveling != BL_DISABLED)
+  /*if (infoMachineSettings.leveling != BL_DISABLED)
   {
     UnifiedMoveItems.items[6].icon = ICON_LEVELING;
     UnifiedMoveItems.items[6].label.index = LABEL_BED_LEVELING;
-  }
+  }*/
 
   menuDrawPage(&UnifiedMoveItems);
 
@@ -59,8 +59,9 @@ void menuUnifiedMove(void)
         break;
 
       case KEY_ICON_6:
-        if (infoMachineSettings.leveling != BL_DISABLED)
-          infoMenu.menu[++infoMenu.cur] = menuBedLeveling;
+        /*if (infoMachineSettings.leveling != BL_DISABLED)
+          infoMenu.menu[++infoMenu.cur] = menuBedLeveling;*/
+        infoMenu.menu[++infoMenu.cur] = menuMoveIdex;
         break;
 
       case KEY_ICON_7:
