@@ -5,6 +5,7 @@
 //                         4*ICON_WIDTH+3*SPACE_X+START_X,ICON_START_Y-STATUS_GANTRY_YOFFSET};
 #define X_MOVE_GCODE "G1 X%.2f F%d\n"
 #define X_HOME_GCODE "G28 X\n"
+#define DISABLE_STEPPERS "M84\n"
 
 #define CHANGE_TOOL0_GCODE "T0\n"
 #define CHANGE_TOOL1_GCODE "T1\n"
@@ -25,24 +26,13 @@ void storeMoveIdexCmd(TOOLS tool, int8_t direction)
 {
   if(tool != now_tool_index){
 
-    mustStoreCmd(changeToolCmd[tool]);
+    storeCmd(changeToolCmd[tool]);
     // update now tool be selected
     now_tool_index = tool;
   }
   // if invert is true, 'direction' multiplied by -1
   storeCmd(X_MOVE_GCODE, (infoSettings.invert_axis[X_AXIS] ? -direction : direction) * moveLenSteps[item_move_len_index],
            infoSettings.xy_speed[infoSettings.move_speed]);
-}
-
-void storeHomeIdexCmd(TOOLS tool)
-{
-  if(tool != now_tool_index){
-
-    mustStoreCmd(changeToolCmd[tool]);
-    // update now tool be selected
-    now_tool_index = tool;
-  }
-  storeCmd(X_HOME_GCODE);
 }
 
 
@@ -59,11 +49,11 @@ void menuMoveIdex(void)
     //   icon                          label
     {
         {ICON_X_DEC_IDEX_X1,           LABEL_X_DEC_IDEX_X1},
-        {ICON_X_HOME_IDEX_X1,          LABEL_X_HOME_IDEX_X1},
+        {ICON_X_HOME,                  LABEL_X},
         {ICON_X_INC_IDEX_X1,           LABEL_X_INC_IDEX_X1},
         {ICON_01_MM,                   LABEL_01_MM},
         {ICON_X_DEC_IDEX_X2,           LABEL_X_DEC_IDEX_X2},
-        {ICON_X_HOME_IDEX_X2,          LABEL_X_HOME_IDEX_X2},
+        {ICON_DISABLE_STEPPERS,        LABEL_DISABLE_STEPPERS},
         {ICON_X_INC_IDEX_X2,           LABEL_X_INC_IDEX_X2},
         {ICON_BACK,                    LABEL_BACK},
     }
@@ -77,9 +67,9 @@ void menuMoveIdex(void)
   // postion table of key
   uint8_t table[TOTAL_AXIS][2] =
     /*-------*-------*-------*---------*
-     | X1-(0) | HomeX1+(1) | X1+(2) | unit(3) |
+     | X1-(0) | HomeX(1) | X1+(2) | unit(3) |
      *-------*-------*-------*---------*
-     | X2-(4) | HomeX2-(5) | X2+(6) | back(7) |
+     | X2-(4) | Dis.Step.5) | X2+(6) | back(7) |
      *-------*-------*-------*---------*/
     //X+ X-   Y+ Y-   Z+ Z-
     {{6, 4}, {1, 5}, {2, 0}};
@@ -104,7 +94,7 @@ void menuMoveIdex(void)
     switch (key_num)
     {
         case KEY_ICON_0: storeMoveIdexCmd(TOOL0, -1); break;  // X1 move decrease if no invert
-        case KEY_ICON_1: storeHomeIdexCmd(TOOL0); break;  // X1 home
+        case KEY_ICON_1: storeCmd(X_HOME_GCODE); now_tool_index = TOOL0; break;  // X1 home
         case KEY_ICON_2: storeMoveIdexCmd(TOOL0, 1); break;   // X1 move increase if no invert
 
         case KEY_ICON_3:
@@ -114,7 +104,7 @@ void menuMoveIdex(void)
           break;
 
         case KEY_ICON_4: storeMoveIdexCmd(TOOL1, -1); break;  // X2 move decrease if no invert
-        case KEY_ICON_5: storeHomeIdexCmd(TOOL1); break;  // X2 home
+        case KEY_ICON_5: storeCmd(DISABLE_STEPPERS); break;  // Disable Steppers
         case KEY_ICON_6: storeMoveIdexCmd(TOOL1, 1); break;   // X2 move increase if no invert
 
         case KEY_ICON_7: infoMenu.cur--; break;
@@ -149,17 +139,17 @@ void drawXYZIdex(void)
   char tempstr[20];
   GUI_SetColor(INFOBOX_ICON_COLOR);
 
-  sprintf(tempstr, "Tool:%d  ", now_tool_index);
-  GUI_DispString(START_X, (ICON_START_Y - BYTE_HEIGHT) / 2, (uint8_t *)tempstr);
-
   sprintf(tempstr, "X:%.2f  ", coordinateGetAxisActual(X_AXIS));
   GUI_DispString(START_X + 1 * SPACE_X + 1 * ICON_WIDTH, (ICON_START_Y - BYTE_HEIGHT) / 2, (uint8_t *)tempstr);
 
-  sprintf(tempstr, "Y:%.2f  ", coordinateGetAxisActual(Y_AXIS));
+  sprintf(tempstr, "Tool:%d  ", now_tool_index);
+  GUI_DispString(START_X + 2 * SPACE_X + 2 * ICON_WIDTH, (ICON_START_Y - BYTE_HEIGHT) / 2, (uint8_t *)tempstr);
+
+  /*sprintf(tempstr, "Y:%.2f  ", coordinateGetAxisActual(Y_AXIS));
   GUI_DispString(START_X + 2 * SPACE_X + 2 * ICON_WIDTH, (ICON_START_Y - BYTE_HEIGHT) / 2, (uint8_t *)tempstr);
 
   sprintf(tempstr, "Z:%.2f  ", coordinateGetAxisActual(Z_AXIS));
-  GUI_DispString(START_X + 3 * SPACE_X + 3 * ICON_WIDTH, (ICON_START_Y - BYTE_HEIGHT) / 2, (uint8_t *)tempstr);
+  GUI_DispString(START_X + 3 * SPACE_X + 3 * ICON_WIDTH, (ICON_START_Y - BYTE_HEIGHT) / 2, (uint8_t *)tempstr);*/
 
   GUI_SetColor(infoSettings.font_color);
 }

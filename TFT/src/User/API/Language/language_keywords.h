@@ -243,8 +243,6 @@ extern "C" {
 #define LANG_KEY_MOVE                         "label_move:"
 #define LANG_KEY_MOVE_IDEX                    "label_move_idex:"
 #define LANG_KEY_HOME                         "label_home:"
-#define LANG_KEY_X_HOME_IDEX_X1               "label_x_home_idex_x1:"
-#define LANG_KEY_X_HOME_IDEX_X2               "label_x_home_idex_x2:"
 #define LANG_KEY_PRINT                        "label_print:"
 #define LANG_KEY_EXTRUDE                      "label_extrude:"
 #define LANG_KEY_SETTINGS                     "label_settings:"
